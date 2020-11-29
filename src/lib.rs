@@ -15,6 +15,15 @@ macro_rules! vecmac {
         $(vs.push($element);)+
         vs
     }};
+
+    ($element:expr; $count:expr) => {{
+        let mut vs = Vec::new();
+        let x = $element;
+        for _ in 0..$count {
+            vs.push(x.clone());
+        }
+        vs
+    }};
 }
 
 
@@ -48,3 +57,22 @@ fn trailing() {
     assert_eq!(x[0], 35);
     assert_eq!(x[1], 41);
 }
+
+
+#[test]
+fn clone_2() {
+    let x: Vec<u32> = vecmac![35; 3];
+    assert_eq!(x[0], 35);
+    assert_eq!(x[1], 35);
+}
+
+
+#[test]
+fn clone_2_non_literal() {
+    let mut y = Some(35);
+    let x: Vec<u32> = vecmac![y.take().unwrap(); 3];
+    assert_eq!(x[0], 35);
+    assert_eq!(x[1], 35);
+}
+
+
