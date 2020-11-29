@@ -8,7 +8,7 @@ macro_rules! vecmac {
         let mut vs = Vec::new();
         // Repeat the pattern as many times as element is in it
         // Looks for the number of time the pattern element is in it
-        $(vs.push($element);)*
+        $(vs.push($element);)+
         vs
     }};
 }
