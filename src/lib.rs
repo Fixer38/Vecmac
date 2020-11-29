@@ -14,11 +14,13 @@ macro_rules! vecmac {
     }};
 
     ($element:expr; $count:expr) => {{
-        let mut vs = Vec::new();
-        let x = $element;
-        for _ in 0..$count {
-            vs.push(x.clone());
-        }
+        let count = $count;
+        let mut vs = Vec::with_capacity(count);
+        // std::iter::repeat yields clones of element while the iterator still can
+        // Element must then implement Clone
+        // Using :: before the use of std to make sure using root path crate
+        // Avoids the issue of std being defined by the caller
+        vs.extend(::std::iter::repeat($element).take(count));
         vs
     }};
 }
@@ -72,4 +74,15 @@ fn clone_2_non_literal() {
     assert_eq!(x[1], 35);
 }
 
+// Should not compile due to missing Clone and Debug trait
+/*
+#[test]
+fn clone_non_clone() {
+    struct Foo;
+    let mut y = Foo;
+    let x: Vec<Foo> = vecmac![y; 3];
+    assert_eq!(x[0], Foo);
+    assert_eq!(x[1], Foo);
+}
+*/
 
